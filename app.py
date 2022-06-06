@@ -277,6 +277,7 @@ def create_venue_form():
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
+  print('Form data ', request.form)
 
   try:
     name = request.form['name']
@@ -296,15 +297,16 @@ def create_venue_submission():
     # TODO: modify data to be the data object returned from db insertion
     new_venue = Venue(name=name, city=city, state=state, address=address,phone=phone,image_link= image_link,
      genre=genre, facebook_link = facebook_link, website=website, seeking_talent=seeking_talent,seeking_description=seeking_description)
-    db.session(new_venue)
+    db.session.add(new_venue)
     db.session.commit()
-    flash('Venue ' + request.form['name'] + ' was successfully listed!')
-  except ValueError:
-    print('FOrm ERROR ', ValueError)
-    flash('Error saving ' + request.form['name'] + '!')
+  except Exception as error:
+    print('FOrm ERROR ', error)
+    flash('Error saving ' + request.form['name'] + '!' + error)
     db.session.rollback()
   finally:
     db.session.close()
+    flash('Venue ' + request.form['name'] + ' was successfully listed!')
+
 
 
 
